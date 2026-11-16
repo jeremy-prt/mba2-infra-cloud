@@ -1,26 +1,22 @@
 # TP1 - Azure Functions
 
-Une petite architecture serverless qui tourne entièrement en local, sans compte Azure. Le stockage Azure est simulé par Azurite, un émulateur fourni par Microsoft.
+Une petite appli serverless qui tourne en local, sans compte Azure. Azurite simule le stockage Azure.
 
-## Comment ça marche
+## Fonctionnement
 
-Le projet contient deux fonctions qui ne se parlent jamais directement : elles communiquent uniquement par une file de messages (une Queue).
+1. httpTrigger reçoit une requête HTTP et met les données dans une Queue.
+2. queueTrigger se lance quand un message arrive dans la Queue et l'enregistre dans une Table.
 
-1. La première fonction, httpTrigger, reçoit une requête HTTP avec des données en JSON et les dépose dans la Queue.
-2. La seconde fonction, queueTrigger, se déclenche toute seule dès qu'un message arrive dans la Queue, puis l'enregistre dans une table (Table Storage).
-
-Les connexions vers la Queue et la Table passent par les bindings Azure, sans code d'accès écrit à la main.
+Les deux fonctions ne s'appellent jamais, elles passent par la Queue.
 
 ## Lancer le projet
 
-Il faut avoir Node.js et pnpm installés. Le reste (l'outil Azure Functions et Azurite) s'installe avec le projet.
+Il faut Node.js et pnpm.
 
-1. Installer les dépendances avec `pnpm install`.
-2. Dans un premier terminal, démarrer Azurite avec `pnpm azurite`.
-3. Dans un second terminal, démarrer les fonctions avec `pnpm start`.
+1. Installer avec `pnpm install`.
+2. Lancer Azurite avec `pnpm azurite`.
+3. Dans un autre terminal, lancer les fonctions avec `pnpm start`.
 
 ## Tester
 
-Envoyer une requête POST sur http://localhost:7071/api/httpTrigger avec un petit JSON dans le corps, par exemple un nom et un message. On peut le faire avec curl, Postman ou Bruno.
-
-Dans les logs du second terminal, on voit la première fonction s'exécuter, puis la seconde juste après. La donnée se retrouve dans la table « messages », qu'on peut consulter avec Azure Storage Explorer.
+Envoyer un POST avec un JSON sur http://localhost:7071/api/httpTrigger. Les deux fonctions s'affichent dans les logs et la donnée arrive dans la table « messages ».
