@@ -1,36 +1,26 @@
 # TP1 - Azure Functions
 
-Petite architecture serverless qui tourne en local, sans compte Azure. Azurite émule le stockage Azure.
+Une petite architecture serverless qui tourne entièrement en local, sans compte Azure. Le stockage Azure est simulé par Azurite, un émulateur fourni par Microsoft.
 
-## Architecture
+## Comment ça marche
 
-```
-POST /api/httpTrigger → httpTrigger → Queue "messages" → queueTrigger → Table "messages"
-```
+Le projet contient deux fonctions qui ne se parlent jamais directement : elles communiquent uniquement par une file de messages (une Queue).
 
-| Fonction | Déclencheur | Rôle |
-|---|---|---|
-| `httpTrigger` | Requête HTTP POST | Envoie le JSON reçu dans la queue |
-| `queueTrigger` | Message dans la queue | Écrit le message dans la table |
+1. La première fonction, httpTrigger, reçoit une requête HTTP avec des données en JSON et les dépose dans la Queue.
+2. La seconde fonction, queueTrigger, se déclenche toute seule dès qu'un message arrive dans la Queue, puis l'enregistre dans une table (Table Storage).
 
-Les deux fonctions ne s'appellent pas : elles passent par la queue, via les bindings Azure.
+Les connexions vers la Queue et la Table passent par les bindings Azure, sans code d'accès écrit à la main.
 
-## Lancer en local
+## Lancer le projet
 
-Prérequis : Node.js et pnpm. Core Tools (`func`) et Azurite sont installés avec le projet.
+Il faut avoir Node.js et pnpm installés. Le reste (l'outil Azure Functions et Azurite) s'installe avec le projet.
 
-```bash
-pnpm install
-pnpm azurite   # terminal 1
-pnpm start     # terminal 2
-```
+1. Installer les dépendances avec `pnpm install`.
+2. Dans un premier terminal, démarrer Azurite avec `pnpm azurite`.
+3. Dans un second terminal, démarrer les fonctions avec `pnpm start`.
 
-Tester :
+## Tester
 
-```bash
-curl -X POST http://localhost:7071/api/httpTrigger \
-  -H "Content-Type: application/json" \
-  -d '{"nom":"Jeremy","message":"Bonjour"}'
-```
+Envoyer une requête POST sur http://localhost:7071/api/httpTrigger avec un petit JSON dans le corps, par exemple un nom et un message. On peut le faire avec curl, Postman ou Bruno.
 
-Les logs de `pnpm start` montrent les deux fonctions s'exécuter. La ligne est visible dans la table `messages`, par exemple avec Azure Storage Explorer.
+Dans les logs du second terminal, on voit la première fonction s'exécuter, puis la seconde juste après. La donnée se retrouve dans la table « messages », qu'on peut consulter avec Azure Storage Explorer.
