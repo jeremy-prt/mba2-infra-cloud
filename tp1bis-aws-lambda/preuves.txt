@@ -1,0 +1,37 @@
+== Compte utilisé (doit être 000000000000, donc l'émulateur)
+000000000000
+
+== Appel valide
+> POST {"nom":"Alice","message":"Bonjour"}
+{"statut":"reçu","id":"f86a3d0d-8ba6-4663-abcf-86c6ae0122e6"}  (HTTP 202)
+
+== DynamoDB juste après la réponse (le traitement asynchrone n'est pas forcément fini)
+0
+
+== Appels successifs
+> POST {"nom":"Bob","message":"Salut"}
+{"statut":"reçu","id":"1013b4d5-9a77-4a14-b927-3dc3dcaffe3a"}  (HTTP 202)
+> POST {"nom":"Chloé","message":"Coucou"}
+{"statut":"reçu","id":"d4b7c76d-10af-4011-ab92-3ca420c86d96"}  (HTTP 202)
+
+== Appels invalides
+> POST pas du json
+{"erreur":"Corps JSON invalide"}  (HTTP 400)
+> POST {"nom":"Sans message"}
+{"erreur":"Les champs nom et message sont obligatoires"}  (HTTP 400)
+
+== Attente du traitement par lambda-sqs
+
+== Contenu de DynamoDB
+---------------------------------------------------------------
+|                            Scan                             |
++--------+----------+-----------------------------------------+
+|  Bob   |  Salut   |  1013b4d5-9a77-4a14-b927-3dc3dcaffe3a   |
+|  Chloé|  Coucou  |  d4b7c76d-10af-4011-ab92-3ca420c86d96   |
+|  Alice |  Bonjour |  f86a3d0d-8ba6-4663-abcf-86c6ae0122e6   |
++--------+----------+-----------------------------------------+
+
+== Logs de lambda-sqs
+Enregistré dans DynamoDB f86a3d0d-8ba6-4663-abcf-86c6ae0122e6
+Enregistré dans DynamoDB 1013b4d5-9a77-4a14-b927-3dc3dcaffe3a
+Enregistré dans DynamoDB d4b7c76d-10af-4011-ab92-3ca420c86d96
