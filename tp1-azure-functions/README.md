@@ -13,9 +13,9 @@ Les deux fonctions ne s'appellent jamais, elles passent par la Queue.
 
 Il faut Node.js et pnpm.
 
-1. Installer avec `pnpm install`.
-2. Lancer Azurite avec `pnpm azurite`.
-3. Dans un autre terminal, lancer les fonctions avec `pnpm start`.
+1. Installer avec pnpm install.
+2. Lancer Azurite avec pnpm azurite.
+3. Dans un autre terminal, lancer les fonctions avec pnpm start.
 
 ## Tester
 
