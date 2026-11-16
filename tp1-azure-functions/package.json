@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/functions/*.js",
   "scripts": {
-    "azurite": "azurite --silent --location .azurite",
+    "azurite": "azurite --location .azurite",
     "start": "func start"
   },
   "dependencies": {
