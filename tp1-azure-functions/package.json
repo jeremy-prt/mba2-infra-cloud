@@ -1,0 +1,17 @@
+{
+  "name": "tp1-azure-functions",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/functions/*.js",
+  "scripts": {
+    "azurite": "azurite --silent --location .azurite",
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.17.1"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.16.1",
+    "azurite": "^3.37.0"
+  }
+}
